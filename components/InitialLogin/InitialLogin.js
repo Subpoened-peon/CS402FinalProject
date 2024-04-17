@@ -1,13 +1,52 @@
 import React, {useState} from 'react';
-import {View, TextInput, Button, TouchableOpacity, Text} from 'react-native';
+import {View, TextInput, Button, TouchableOpacity, Text, Alert} from 'react-native';
 import styles from './InitialLoginStyles';
 
 const InitialLogin = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const [user, setUser] = useState({ userName: '', password: '' });
 
   const registrationHandler = () => {
 
+    var loadAddress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=ReelUsers22";
+
+    var saveAddress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/savejson.php?user=ReelUsers22";
+
+    fetch(loadAddress + '?userName=' + userName)
+    .then(response => response.json())
+    .then(data => {
+      if (data.exists) {
+        alert('This username is taken.');
+      } else if (password) {
+        fetch(saveAddress, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userName: userName,
+            password: password,
+          }),
+      })
+      .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('User saved successfully');
+          } else {
+            alert('Failed to save user');
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+      } else {
+        alert('Please enter a password');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    }); 
   }
 
   const loginHandler = () => {
