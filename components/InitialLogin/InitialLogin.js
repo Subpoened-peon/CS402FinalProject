@@ -2,55 +2,111 @@ import React, {useState} from 'react';
 import {View, TextInput, Button, TouchableOpacity, Text, Alert} from 'react-native';
 import styles from './InitialLoginStyles';
 
+async function loadUsers(aurl, setUserList) {
+  try {
+    console.log('loading users...');
+    const response = await fetch(aurl);
+    const users = await response.json();
+    setUserList(users);
+    console.log('Users loaded:', users);
+  } catch (error) {
+    console.error('Error loading users:', error);
+  }
+}
+
+async function registerUser(aurl, newUser) {
+  try {
+    const requestOptions = {
+      method: 'POST', 
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(newUser)
+    };
+    const response = await fetch(aurl, requestOptions);
+    const data = await response.json();
+    console.log(data); 
+    console.log("save worked");
+    return data;
+  } catch (error) {
+    console.error('Error registering user:', error);
+    throw error;
+  }
+}
+
 const InitialLogin = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState({ userName: '', password: '' });
+  const [userList, setUserList] =
+useState([]);
+  const [loggedInUser, setLoggedInUser] = useState(null);
 
   const registrationHandler = () => {
 
-    var loadAddress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=ReelUsers22";
-
-    var saveAddress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/savejson.php?user=ReelUsers22";
-
-    fetch(loadAddress + '?userName=' + userName)
-    .then(response => response.json())
-    .then(data => {
-      if (data.exists) {
-        alert('This username is taken.');
-      } else if (password) {
-        fetch(saveAddress, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userName: userName,
-            password: password,
-          }),
-      })
-      .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            alert('User saved successfully');
-          } else {
-            alert('Failed to save user');
-          }
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-      } else {
-        alert('Please enter a password');
-      }
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    }); 
+    if (password.trim() === '') {
+    Alert.alert('Please enter a password');
+    return;
   }
 
-  const loginHandler = () => {
+  if (userName.trim() === '') {
+    Alert.alert('Please enter a user name');
+    return;
+  }
 
+    const loadAddress = "https://cs.boisestate.edu/~scutchin/project/loadjson.php?user=FishRecorder11";
+
+    loadUsers(loadAddress, setUserList);
+
+    const existingUser = userList.some(user => user.userName === userName);
+  if (existingUser) {
+    Alert.alert('This username is taken.');
+    return;
+  }
+
+    const saveAddress = "https://cs.boisestate.edu/~scutchin/project/savejson.php?user=FishRecorder11";
+
+  try {
+    const newUser = { userName: userName, password: password };
+    const response = registerUser(saveAddress, newUser);
+    setLoggedInUser(userName);
+    console.log(response);
+    Alert.alert('User registered successfully');
+  } catch (error) {
+    Alert.alert('Failed to register user:', error);
+  }
+
+
+  };
+
+
+  const loginHandler = async () => {
+    if (password.trim() === '') {
+    Alert.alert('Please enter a password');
+    return;
+  }
+
+  if (userName.trim() === '') {
+    Alert.alert('Please enter a user name');
+    return;
+  }
+
+    const loadAddress = "https://cs.boisestate.edu/~scutchin/project/loadjson.php?user=FishRecorder11";
+
+    try {
+    await loadUsers(loadAddress, setUserList); // Wait for user list to be loaded
+    const existingUser = userList.some(user => user.userName === userName);
+    
+    if (existingUser) {
+      if (existingUser.password === password) {
+        setLoggedInUser(userName);
+        Alert.alert('Login successful');
+      } else {
+        Alert.alert('Incorrect password');
+      }
+    } else {
+      Alert.alert('User not found');
+    }
+  } catch (error) {
+    Alert.alert('Error logging in:', error.message);
+  }
   }
 
   return (
