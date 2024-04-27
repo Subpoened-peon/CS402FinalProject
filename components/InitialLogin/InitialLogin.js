@@ -47,11 +47,10 @@ async function addNewUser(saveUrl, userList) {
 }
 
 
-const InitialLogin = () => {
+const InitialLogin = ({ setIsLoggedIn, setLoggedInUser }) => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [userList, setUserList] = useState([]);
-  const [loggedInUser, setLoggedInUser] = useState(null);
 
   useEffect(() => {
     const loadAddress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=nicmerritt55";
@@ -84,7 +83,8 @@ async function registrationHandler() {
 
   await addNewUser(saveAddress, updatedUserList);
   Alert.alert("Successfully registered your account. Welcome!");
-  setLoggedInUser(newUser.userName);
+  setIsLoggedIn(true);
+  setLoggedInUser(user.userName);
 }
 
 
@@ -114,6 +114,7 @@ async function registrationHandler() {
 
   // Successful login
   Alert.alert("Login successful!");
+  setIsLoggedIn(true);
   setLoggedInUser(user.userName);
 }
 
