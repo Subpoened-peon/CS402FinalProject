@@ -1,47 +1,65 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, TextInput, Button, TouchableOpacity, Text, Alert} from 'react-native';
 import styles from './InitialLoginStyles';
 
-async function loadUsers(aurl, setUserList) {
+async function pullUsers(aUserSet, loadUrl) {
   try {
-    console.log('loading users...');
-    const response = await fetch(aurl);
-    const users = await response.json();
-    setUserList(users);
-    console.log('Users loaded:', users);
-  } catch (error) {
-    console.error('Error loading users:', error);
-  }
-}
+    const response = await fetch(loadUrl);
 
-async function registerUser(aurl, newUser) {
-  try {
-    const requestOptions = {
-      method: 'POST', 
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(newUser)
-    };
-    const response = await fetch(aurl, requestOptions);
-    const data = await response.json();
-    console.log(data); 
-    console.log("save worked");
-    return data;
+    if (!response.ok) {
+      throw new Error('Failed to fetch user data');
+    }
+
+    const userNames = await response.json();
+
+    const newUserList = userNames.map(user => ({
+      userName: user.userName,
+      password: user.password,
+    }));
+    aUserSet(newUserList);
   } catch (error) {
-    console.error('Error registering user:', error);
+    console.error('Error checking username existence:', error);
     throw error;
   }
 }
 
+
+async function addNewUser(saveUrl, userList) {
+  try {
+    const requestOptions = {
+      method: 'POST', 
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(userList)
+    };
+
+    const response = await fetch(saveUrl, requestOptions);
+
+    if (!response.ok) {
+      throw new Error('Failed to save user data');
+    }
+
+    console.log(response);
+    console.log("Save operation successful");
+  } catch (error) {
+    console.error('Error saving user data:', error);
+    throw error;
+  }
+}
+
+
 const InitialLogin = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  const [userList, setUserList] =
-useState([]);
+  const [userList, setUserList] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState(null);
 
-  const registrationHandler = () => {
+  useEffect(() => {
+    const loadAddress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=nicmerritt55";
+    pullUsers(setUserList, loadAddress);
+  }, []);
 
-    if (password.trim() === '') {
+async function registrationHandler() {
+  if (password.trim() === '') {
     Alert.alert('Please enter a password');
     return;
   }
@@ -51,34 +69,28 @@ useState([]);
     return;
   }
 
-    const loadAddress = "https://cs.boisestate.edu/~scutchin/project/loadjson.php?user=FishRecorder11";
+  const userExists = userList.some(user => user.userName === userName);
 
-    loadUsers(loadAddress, setUserList);
-
-    const existingUser = userList.some(user => user.userName === userName);
-  if (existingUser) {
-    Alert.alert('This username is taken.');
+  if(userExists) {
+    Alert.alert("Username already exists. Pick another.");
     return;
   }
 
-    const saveAddress = "https://cs.boisestate.edu/~scutchin/project/savejson.php?user=FishRecorder11";
+  const saveAddress = "https://cs.boisestate.edu/~scutchin/cs402/codesnips/savejson.php?user=nicmerritt55";
+  const newUser = { userName: userName, password: password };
 
-  try {
-    const newUser = { userName: userName, password: password };
-    const response = registerUser(saveAddress, newUser);
-    setLoggedInUser(userName);
-    console.log(response);
-    Alert.alert('User registered successfully');
-  } catch (error) {
-    Alert.alert('Failed to register user:', error);
-  }
+  const updatedUserList = [...userList, newUser];
+  setUserList(updatedUserList);
 
-
-  };
+  await addNewUser(saveAddress, updatedUserList);
+  Alert.alert("Successfully registered your account. Welcome!");
+  setLoggedInUser(newUser.userName);
+}
 
 
-  const loginHandler = async () => {
-    if (password.trim() === '') {
+
+  async function loginHandler() {
+  if (password.trim() === '') {
     Alert.alert('Please enter a password');
     return;
   }
@@ -88,26 +100,22 @@ useState([]);
     return;
   }
 
-    const loadAddress = "https://cs.boisestate.edu/~scutchin/project/loadjson.php?user=FishRecorder11";
+  const user = userList.find(user => user.userName === userName);
 
-    try {
-    await loadUsers(loadAddress, setUserList); // Wait for user list to be loaded
-    const existingUser = userList.some(user => user.userName === userName);
-    
-    if (existingUser) {
-      if (existingUser.password === password) {
-        setLoggedInUser(userName);
-        Alert.alert('Login successful');
-      } else {
-        Alert.alert('Incorrect password');
-      }
-    } else {
-      Alert.alert('User not found');
-    }
-  } catch (error) {
-    Alert.alert('Error logging in:', error.message);
+  if (!user) {
+    Alert.alert("User not found. Please register.");
+    return;
   }
+
+  if (user.password !== password) {
+    Alert.alert("Incorrect password");
+    return;
   }
+
+  // Successful login
+  Alert.alert("Login successful!");
+  setLoggedInUser(user.userName);
+}
 
   return (
     <View style = {styles.container}>
