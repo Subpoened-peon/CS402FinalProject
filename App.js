@@ -1,3 +1,5 @@
+import React, {useState, useEffect} from 'react';
+
 import { Image, ImageBackground, Text, SafeAreaView, StyleSheet, View } from 'react-native';
 
 // You can import supported modules from npm
@@ -5,17 +7,30 @@ import { Card } from 'react-native-paper';
 
 // or any files within the Snack
 import InitialLogin from './components/InitialLogin/InitialLogin';
+import Profile from './components/Profile/Profile';
 
 const back = require('./assets/loginBack.png');
 const logo = require('./assets/RRL.png');
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
   return (
     <SafeAreaView style={styles.container}>
-    <ImageBackground source = {back} resizeMode="cover" style={styles.backgroundImage}/>
-    <Image source = {logo} style = {styles.logo}/>
-    <Text>Welcome!</Text>
-      <InitialLogin  />
+      <ImageBackground source={back} resizeMode="cover" style={styles.backgroundImage} />
+      {!isLoggedIn && (
+        <>
+          <Image source={logo} style={styles.logo} />
+          <Text>Welcome!</Text>
+          <InitialLogin setIsLoggedIn={setIsLoggedIn} setLoggedInUser={setLoggedInUser} />
+        </>
+      )}
+      {isLoggedIn && (
+        <>
+          <Profile loggedInUser={loggedInUser} />
+        </>
+      )}
     </SafeAreaView>
   );
 }
