@@ -4,10 +4,12 @@ import { Image, ImageBackground, Text, SafeAreaView, StyleSheet, View } from 're
 
 // You can import supported modules from npm
 import { Card } from 'react-native-paper';
+import { NavigationContainer } from '@react-navigation/native';
 
 // or any files within the Snack
 import InitialLogin from './components/InitialLogin/InitialLogin';
 import Profile from './components/Profile/Profile';
+import NavigationBar from './components/NavigationBar/NavigationBar'
 
 const back = require('./assets/loginBack.png');
 const logo = require('./assets/RRL.png');
@@ -17,21 +19,19 @@ export default function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ImageBackground source={back} resizeMode="cover" style={styles.backgroundImage} />
-      {!isLoggedIn && (
-        <>
-          <Image source={logo} style={styles.logo} />
-          <Text>Welcome!</Text>
-          <InitialLogin setIsLoggedIn={setIsLoggedIn} setLoggedInUser={setLoggedInUser} />
-        </>
-      )}
-      {isLoggedIn && (
-        <>
-          <Profile loggedInUser={loggedInUser} />
-        </>
-      )}
-    </SafeAreaView>
+    <NavigationContainer>
+      <View style={styles.container}>
+        <ImageBackground source={back} resizeMode="cover" style={styles.backgroundImage} />
+        {!isLoggedIn && (
+          <>
+            <Image source={logo} style={styles.logo} />
+            <Text>Welcome!</Text>
+            <InitialLogin setIsLoggedIn={setIsLoggedIn} setLoggedInUser={setLoggedInUser} />
+          </>
+        )}
+      </View>
+      {isLoggedIn && <NavigationBar />}
+    </NavigationContainer>
   );
 }
 
