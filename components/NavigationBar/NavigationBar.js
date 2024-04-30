@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { Image, ImageBackground, Text, SafeAreaView, StyleSheet, View } from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { Profile } from '../Profile/Profile';
 
 // #TODO REMOVE PLACEHOLDER SCREENS
 // Placeholder screen for Map button
@@ -42,17 +42,14 @@ export function GalleryScreen() {
 }
 
 // Placeholder screen for Profile button
-export function ProfileScreen() {
-  return (
-    <View style={styles.container}>
-      <Text>Profile Screen</Text>
-    </View>
-  );
+export function ProfileScreen({route}) {
+  const {loggedInUser} = route.params;
+  <Profile loggedInUser={loggedInUser} />
 }
 
 const Tab = createBottomTabNavigator();
 
-export default function BottomTabNavigator() {
+export default function BottomTabNavigator({loggedInUser}) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -79,11 +76,11 @@ export default function BottomTabNavigator() {
         inactiveTintColor: 'gray',
       }}
     >
-      <Tab.Screen name="Map" component={MapScreen} />
-      <Tab.Screen name="Scroll" component={ScrollScreen} />
-      <Tab.Screen name="Post" component={PostScreen} />
-      <Tab.Screen name="Gallery" component={GalleryScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Map" component={MapScreen} initialParams={{ loggedInUser }} />
+      <Tab.Screen name="Scroll" component={ScrollScreen} initialParams={{ loggedInUser }} />
+      <Tab.Screen name="Post" component={PostScreen} initialParams={{ loggedInUser }} />
+      <Tab.Screen name="Gallery" component={GalleryScreen} initialParams={{ loggedInUser }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} initialParams={{ loggedInUser }} />
     </Tab.Navigator>
   );
 }

@@ -1,15 +1,8 @@
-import React, {useState, useEffect} from 'react';
-
-import { Image, ImageBackground, Text, SafeAreaView, StyleSheet, View } from 'react-native';
-
-// You can import supported modules from npm
-import { Card } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { Image, ImageBackground, Text, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-
-// or any files within the Snack
 import InitialLogin from './components/InitialLogin/InitialLogin';
-import Profile from './components/Profile/Profile';
-import NavigationBar from './components/NavigationBar/NavigationBar'
+import NavigationBar from './components/NavigationBar/NavigationBar';
 
 const back = require('./assets/loginBack.png');
 const logo = require('./assets/RRL.png');
@@ -20,42 +13,35 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <View style={styles.container}>
-        <ImageBackground source={back} resizeMode="cover" style={styles.backgroundImage} />
-        {!isLoggedIn && (
-          <>
-            <Image source={logo} style={styles.logo} />
-            <Text>Welcome!</Text>
-            <InitialLogin setIsLoggedIn={setIsLoggedIn} setLoggedInUser={setLoggedInUser} />
-          </>
-        )}
-      </View>
-      {isLoggedIn && <NavigationBar />}
+      {!isLoggedIn && (
+        <>
+          <ImageBackground source={back} resizeMode="cover" style={styles.backgroundImage} />
+          <Image source={logo} style={styles.logo} />
+          <Text style={styles.welcomeText}>Welcome!</Text>
+          <InitialLogin setIsLoggedIn={setIsLoggedIn} setLoggedInUser={setLoggedInUser} />
+        </>
+      )}
+      {isLoggedIn && <NavigationBar loggedInUser={loggedInUser}/>}
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    padding: 1,
-    alignItems: 'center',
-    top: -280
-  },
   backgroundImage: {
     flex: 1,
-    left: -390
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
   },
   logo: {
     height: 320,
     width: 250,
-    top: 10
+    alignSelf: 'center', // Horizontally center the logo
+    marginTop: 10,
   },
-  paragraph: {
-    margin: 24,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  welcomeText: {
+    textAlign: 'center', // Center the text horizontally
+    fontSize: 24,
+    marginTop: 10,
   },
 });
