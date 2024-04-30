@@ -3,6 +3,7 @@ import { Image, ImageBackground, Text, SafeAreaView, StyleSheet, View } from 're
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { Profile } from '../Profile/Profile';
+import PostMain from '../Post/Post';
 
 // #TODO REMOVE PLACEHOLDER SCREENS
 // Placeholder screen for Map button
@@ -19,15 +20,6 @@ export function ScrollScreen() {
   return (
     <View style={styles.container}>
       <Text>Scroll Screen</Text>
-    </View>
-  );
-}
-
-// Placeholder screen for Post button
-export function PostScreen() {
-  return (
-    <View style={styles.container}>
-      <Text>Post Screen</Text>
     </View>
   );
 }
@@ -78,7 +70,7 @@ export default function BottomTabNavigator({loggedInUser}) {
     >
       <Tab.Screen name="Map" component={MapScreen} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Scroll" component={ScrollScreen} initialParams={{ loggedInUser }} />
-      <Tab.Screen name="Post" component={PostScreen} initialParams={{ loggedInUser }} />
+      <Tab.Screen name="Post" component={PostMain} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Gallery" component={GalleryScreen} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Profile" component={ProfileScreen} initialParams={{ loggedInUser }} />
     </Tab.Navigator>
