@@ -4,16 +4,17 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { Profile } from '../Profile/Profile';
 import PostMain from '../Post/Post';
+import Map from '../Map/Map';
 
 // #TODO REMOVE PLACEHOLDER SCREENS
 // Placeholder screen for Map button
-export function MapScreen() {
-  return (
-    <View style={styles.container}>
-      <Text>Map Screen</Text>
-    </View>
-  );
-}
+// export function MapScreen() {
+//   return (
+//     <View style={styles.container}>
+//       <Text>Map Screen</Text>
+//     </View>
+//   );
+// }
 
 // Placeholder screen for Scroll button
 export function ScrollScreen() {
@@ -68,7 +69,7 @@ export default function BottomTabNavigator({loggedInUser}) {
         inactiveTintColor: 'gray',
       }}
     >
-      <Tab.Screen name="Map" component={MapScreen} initialParams={{ loggedInUser }} />
+      <Tab.Screen name="Map" component={Map} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Scroll" component={ScrollScreen} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Post" component={PostMain} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Gallery" component={GalleryScreen} initialParams={{ loggedInUser }} />
