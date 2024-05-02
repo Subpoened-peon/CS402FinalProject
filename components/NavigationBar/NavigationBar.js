@@ -3,7 +3,7 @@ import { Image, ImageBackground, Text, SafeAreaView, StyleSheet, View } from 're
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { Profile } from '../Profile/Profile';
-import PostMain from '../Post/Post';
+import PostScreen from '../Post/Post';
 import Map from '../Map/Map';
 
 // #TODO REMOVE PLACEHOLDER SCREENS
@@ -71,7 +71,7 @@ export default function BottomTabNavigator({loggedInUser}) {
     >
       <Tab.Screen name="Map" component={Map} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Scroll" component={ScrollScreen} initialParams={{ loggedInUser }} />
-      <Tab.Screen name="Post" component={PostMain} initialParams={{ loggedInUser }} />
+      <Tab.Screen name="Post" component={PostScreen} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Gallery" component={GalleryScreen} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Profile" component={ProfileScreen} initialParams={{ loggedInUser }} />
     </Tab.Navigator>

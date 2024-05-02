@@ -1,24 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Text,
   View,
   TouchableOpacity,
   useWindowDimensions,
-  Platform,
   StyleSheet,
   TextInput,
   Image,
   Button,
+  Alert
 } from 'react-native';
 import { Camera } from 'expo-camera';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const PostScreen = () => {
+async function pullPosts(aPostSet, loadUrl) {
+  try {
+    const response = await fetch(loadUrl);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch posts');
+    }
+
+    const posts = await response.json();
+
+    const newPostList = posts.map((post) => ({
+      userName: post.userName,
+      caption: post.caption,
+      latitude: post.latitude,
+      longitude: post.longitude,
+      image: post.image,
+    }));
+    aPostSet(newPostList);
+  } catch (error) {
+    console.error('Error pulling posts:', error);
+    throw error;
+  }
+}
+
+const PostScreen = ({ loggedInUser }) => {
+  const [postList, setPostList] = useState([]);
   const [aphoto, setPhoto] = useState('assets/snack-icon.png');
+  const latRef = useRef(0.0);
+  const longRef = useRef(0.0);
+  const capRef = useRef('insert caption');
+
   const SCREEN_WIDTH = useWindowDimensions().width;
   const SCREEN_HEIGHT = useWindowDimensions().height;
+
+  useEffect(() => {
+    const loadAddress =
+      'https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=ReelRecordPosts';
+    pullPosts(setPostList, loadAddress);
+  }, []);
 
   const PostStack = createNativeStackNavigator();
   function PostMain() {
@@ -42,7 +77,6 @@ const PostScreen = () => {
     }, []);
 
     if (hasPermission !== 'granted' && hasPermission !== true) {
-      console.log('no camera permission, ', hasPermission);
       return (
         <View>
           <Text>No Access To Camera</Text>
@@ -56,7 +90,6 @@ const PostScreen = () => {
         <Camera
           ref={(ref) => {
             this.SnapCamera = ref;
-            console.log('displaying camera');
           }}
           style={styles.camera}
           type={type}
@@ -86,14 +119,10 @@ const PostScreen = () => {
     );
 
     const snap = async () => {
-      console.log('Take Snap');
       if (this.SnapCamera) {
-        console.log('Camera Available');
         const options = { quality: 0.5, base64: true };
         let photo = await this.SnapCamera.takePictureAsync(options);
         setPhoto(photo.uri);
-        console.log('Got the Photo');
-        console.log(photo.uri, aphoto);
       }
     };
 
@@ -111,89 +140,108 @@ const PostScreen = () => {
         <Button title="Post" onPress={() => postImage()} />
       </View>
     );
-  }
 
-  function LocationView() {
-    console.log(aphoto);
-    const [onetime, setOneTime] = useState(true);
+    function LocationView() {
+      const [mylocation, setLocal] = useState();
+      const [region, setRegion] = useState(null);
 
-    async function getGPSPermission(alocalf) {
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      const getGPSPermission = useCallback(async (alocalf) => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
 
-      if (status !== 'granted' && status !== true) {
-        alocalf('Permission to access location was denied');
-      } else {
-        alocalf('permission available');
-      }
+        if (status !== 'granted' && status !== true) {
+          alocalf('Permission to access location was denied');
+        } else {
+          alocalf('permission available');
+        }
+      }, []);
+
+      getGPSPermission(setLocal);
+      useEffect(() => {
+        const fetchCurrentLocation = async () => {
+          // Fetch current location
+          const location = await Location.getCurrentPositionAsync({
+            accuracy: 6,
+          });
+          const { latitude, longitude } = location.coords;
+          setRegion({
+            latitude,
+            longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+          latRef.current = latitude;
+          longRef.current = longitude;
+        };
+        fetchCurrentLocation();
+      }, [region]);
+
+      var smaps = { width: SCREEN_WIDTH / 1.05, height: SCREEN_HEIGHT / 3 };
+
+      return (
+        <View style={styles.container}>
+          {region && (
+            <MapView initialRegion={region} style={smaps}>
+              <Marker
+                coordinate={{
+                  latitude: region.latitude,
+                  longitude: region.longitude,
+                }}
+                title={'Your Location'}
+              />
+            </MapView>
+          )}
+        </View>
+      );
     }
-    async function getLocationAsync(amarkf) {
-      console.log('getting location');
-      let location = await Location.getCurrentPositionAsync({});
-      console.log('got location');
 
-      var text = JSON.stringify(location);
-      var bapos = (
-        <Marker
-          coordinate={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          }}
-          title={'place1'}
-          description={'CS402 GPS'}
+    function CaptionView() {
+      const [acaption, setCaption] = useState('Insert Caption');
+      capRef.current = acaption;
+      return (
+        <TextInput
+          style={styles.inputbox}
+          value={acaption}
+          onChangeText={setCaption}
         />
       );
-      var latitude = location.coords.latitude;
-      var longitude = location.coords.longitude;
-
-      amarkf(bapos);
     }
 
-    var apos = (
-      <Marker
-        coordinate={{ latitude: 0.78825, longitude: -122.4324 }}
-        title={'place1'}
-        description={'description'}
-        image={require('../../assets/snack-icon.png')}
-      />
-    );
+    async function postImage() {
+      const saveAddress =
+        'https://cs.boisestate.edu/~scutchin/cs402/codesnips/savejson.php?user=ReelRecordPosts';
+      const newPost = {
+        userName: loggedInUser,
+        caption: capRef.current,
+        latitude: latRef.current,
+        longitude: longRef.current,
+        image: aphoto,
+      };
 
-    const [mylocation, setLocal] = useState();
-    const [mypos, setPosition] = useState(apos);
-    var smaps = { width: SCREEN_WIDTH / 1.05, height: SCREEN_HEIGHT / 3 };
+      const updatedPostList = [newPost, ...postList];
+      setPostList(updatedPostList);
 
-    var myos = 'unknown';
-    if (Platform.OS === 'ios') {
-      myos = 'iOS';
-    } else if (Platform.OS === 'android') {
-      myos = 'Android';
+      await addNewPost(saveAddress, updatedPostList);
+      Alert.alert('Successfully posted.');
     }
-    getGPSPermission(setLocal);
 
-    useEffect(() => {
-      if (onetime) {
-        if (mylocation === 'permission available') {
-          getLocationAsync(setPosition);
+    async function addNewPost(saveUrl, postList) {
+      try {
+        const requestOptions = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(postList),
+        };
+
+        const response = await fetch(saveUrl, requestOptions);
+
+        if (!response.ok) {
+          throw new Error('Failed to save post data');
         }
-        setOneTime(false);
+      } catch (error) {
+        console.error('Error saving post data:', error);
+        throw error;
       }
-    }, [onetime, mylocation, mypos]);
-
-    return (
-      <View style={styles.container}>
-        <MapView style={smaps}>{mypos}</MapView>
-      </View>
-    );
-  }
-
-  function CaptionView() {
-    const [newdata, setNewData] = useState('Insert Caption');
-    return (
-      <TextInput
-        style={styles.inputbox}
-        value={newdata}
-        onChangeText={setNewData}
-      />
-    );
+    }
   }
 
   const styles = StyleSheet.create({
