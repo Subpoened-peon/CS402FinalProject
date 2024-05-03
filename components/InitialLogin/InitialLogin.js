@@ -83,8 +83,8 @@ async function registrationHandler() {
 
   await addNewUser(saveAddress, updatedUserList);
   Alert.alert("Successfully registered your account. Welcome!");
-  setIsLoggedIn(true);
   setLoggedInUser(user.userName);
+  setIsLoggedIn(true);
 }
 
 
