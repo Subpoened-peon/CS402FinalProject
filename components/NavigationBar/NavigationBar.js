@@ -6,15 +6,7 @@ import ProfileMain from '../Profile/Profile';
 import PostScreen from '../Post/Post';
 import Map from '../Map/Map';
 import Scroll from '../Scroll/Scroll';
-
-// Placeholder screen for Gallery button
-export function GalleryScreen() {
-  return (
-    <View style={styles.container}>
-      <Text>Gallery Screen</Text>
-    </View>
-  );
-}
+import Gallery from '../Gallery/Gallery';
 
 const Tab = createBottomTabNavigator();
 
@@ -48,7 +40,7 @@ export default function BottomTabNavigator({loggedInUser}) {
       <Tab.Screen name="Map" component={Map} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Scroll" component={Scroll} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Post" component={PostScreen} initialParams={{ loggedInUser }} />
-      <Tab.Screen name="Gallery" component={GalleryScreen} initialParams={{ loggedInUser }} />
+      <Tab.Screen name="Gallery" component={Gallery} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Profile" component={ProfileMain} initialParams={{ loggedInUser }} />
     </Tab.Navigator>
   );
