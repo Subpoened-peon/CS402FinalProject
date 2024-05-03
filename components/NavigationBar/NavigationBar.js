@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, ImageBackground, Text, SafeAreaView, StyleSheet, View } from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { Profile } from '../Profile/Profile';
+import ProfileMain from '../Profile/Profile';
 import PostScreen from '../Post/Post';
 import Map from '../Map/Map';
 import Scroll from '../Scroll/Scroll';
@@ -14,12 +14,6 @@ export function GalleryScreen() {
       <Text>Gallery Screen</Text>
     </View>
   );
-}
-
-// Placeholder screen for Profile button
-export function ProfileScreen({route}) {
-  const {loggedInUser} = route.params;
-  <Profile loggedInUser={loggedInUser} />
 }
 
 const Tab = createBottomTabNavigator();
@@ -55,7 +49,7 @@ export default function BottomTabNavigator({loggedInUser}) {
       <Tab.Screen name="Scroll" component={Scroll} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Post" component={PostScreen} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Gallery" component={GalleryScreen} initialParams={{ loggedInUser }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} initialParams={{ loggedInUser }} />
+      <Tab.Screen name="Profile" component={ProfileMain} initialParams={{ loggedInUser }} />
     </Tab.Navigator>
   );
 }
