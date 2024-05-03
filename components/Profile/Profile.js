@@ -91,8 +91,10 @@ export default function ProfileMain({ navigation, route }) {
     const existingProfileIndex = updatedProfilePics.findIndex(profile => profile.userName === loggedInUser);
 
     if (existingProfileIndex !== -1) {
+      // If profile exists, update it
       updatedProfilePics[existingProfileIndex] = newProfilePic;
     } else {
+      // If profile doesn't exist, add it to the list
       updatedProfilePics.push(newProfilePic);
     }
 
@@ -125,7 +127,7 @@ const renderProfilePic = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.message}>{loggedInUser}'s Profile viewed inside Tab Navigator --- </Text>
+      <Text style={styles.message}>Hello {loggedInUser}!</Text>
       {renderProfilePic()}
       <TouchableOpacity onPress={profileHandler} style={styles.button}>
         <Text style={styles.buttonText}>Set Profile Picture</Text>
