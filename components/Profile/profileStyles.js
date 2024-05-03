@@ -5,11 +5,11 @@ const profileStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F0F0F0', // Background color for the profile container
+    backgroundColor: '#F0F0F0', 
   },
   message: {
     fontSize: 16,
-    color: '#333', // Text color for the message
+    color: '#333', 
     marginBottom: 20,
   },
   input: {
@@ -28,6 +28,15 @@ const profileStyles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
   },
+  textInput: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    width: '100%',
+    minHeight: 100,
+  },
   button: {
     backgroundColor: '#1E7B67',
     borderRadius: 1000,
@@ -36,6 +45,11 @@ const profileStyles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
+  },
+  profilePic: {
+    width: 100,
+    height: 100,
+    borderRadius: 50, 
   },
 });
 
