@@ -5,25 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Profile } from '../Profile/Profile';
 import PostScreen from '../Post/Post';
 import Map from '../Map/Map';
-
-// #TODO REMOVE PLACEHOLDER SCREENS
-// Placeholder screen for Map button
-// export function MapScreen() {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Map Screen</Text>
-//     </View>
-//   );
-// }
-
-// Placeholder screen for Scroll button
-export function ScrollScreen() {
-  return (
-    <View style={styles.container}>
-      <Text>Scroll Screen</Text>
-    </View>
-  );
-}
+import Scroll from '../Scroll/Scroll';
 
 // Placeholder screen for Gallery button
 export function GalleryScreen() {
@@ -70,7 +52,7 @@ export default function BottomTabNavigator({loggedInUser}) {
       }}
     >
       <Tab.Screen name="Map" component={Map} initialParams={{ loggedInUser }} />
-      <Tab.Screen name="Scroll" component={ScrollScreen} initialParams={{ loggedInUser }} />
+      <Tab.Screen name="Scroll" component={Scroll} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Post" component={PostScreen} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Gallery" component={GalleryScreen} initialParams={{ loggedInUser }} />
       <Tab.Screen name="Profile" component={ProfileScreen} initialParams={{ loggedInUser }} />
