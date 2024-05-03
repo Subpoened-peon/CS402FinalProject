@@ -1,14 +1,22 @@
-import React, { Component } from 'react';
-import {useState,useEffect} from 'react';
-import { Platform, Text, View, StyleSheet } from 'react-native';
-import  MapView from 'react-native-maps';
-import {Marker} from 'react-native-maps';
-import * as Location from 'expo-location';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Image, Text } from 'react-native';
+import MapView, { Marker, Callout } from 'react-native-maps';
 
-export default function Map() {
-  const defaultLocation = { // Default location coordinates
-    latitude: 37.78825,
-    longitude: -122.4324,
+const Map = () => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch('https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=ReelRecordPosts');
+      const data = await response.json();
+      setPosts(data);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
   };
 
   return (
@@ -16,28 +24,47 @@ export default function Map() {
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: defaultLocation.latitude,
-          longitude: defaultLocation.longitude,
+          latitude: 43.618881, // Default latitude
+          longitude: -116.215019, // Default longitude
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
       >
-        <Marker
-          coordinate={defaultLocation}
-          title="Default Location"
-        />
+        {posts.map((post, index) => (
+          <Marker
+            key={index}
+            coordinate={{
+              latitude: post.latitude,
+              longitude: post.longitude,
+            }}
+            title={post.caption}
+          >
+            <Callout>
+              <View>
+                {/* Display post image here */}
+                <Image source={{ uri: post.image }} style={styles.image} />
+                <Text>{post.caption}</Text>
+              </View>
+            </Callout>
+          </Marker>
+        ))}
       </MapView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
+  },
+  image: {
+    width: 100,
+    height: 100,
   },
 });
+
+export default Map;
+
