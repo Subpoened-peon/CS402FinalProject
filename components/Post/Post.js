@@ -195,12 +195,13 @@ const PostScreen = ({ loggedInUser }) => {
     }
 
     function CaptionView() {
-      const [acaption, setCaption] = useState('Insert Caption');
+      const [acaption, setCaption] = useState('');
       capRef.current = acaption;
       return (
         <TextInput
           style={styles.inputbox}
           value={acaption}
+          placeholder={'Insert caption'}
           onChangeText={setCaption}
         />
       );
