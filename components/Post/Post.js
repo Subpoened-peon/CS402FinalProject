@@ -39,7 +39,9 @@ async function pullPosts(aPostSet, loadUrl) {
   }
 }
 
-const PostScreen = ({ loggedInUser }) => {
+const PostScreen = ({ navigation, route }) => {
+  const { loggedInUser } = route.params;
+  console.log(loggedInUser);
   const [postList, setPostList] = useState([]);
   const [aphoto, setPhoto] = useState('assets/snack-icon.png');
   const latRef = useRef(0.0);
