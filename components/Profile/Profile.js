@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import styles from './profileStyles.js';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -116,8 +116,6 @@ const renderProfilePic = () => {
 
       const userProfile = profilePics.find(profile => profile.userName === loggedInUser);
       if (userProfile) {
-        console.log("Profile User Name:", userProfile.userName);
-        console.log(userProfile.profilePic);
         const base64ImageUri = `data:image/jpg;base64,${userProfile.profilePic}`;
     return <Image source={{ uri: base64ImageUri }} style={styles.profilePic} />;
       }
