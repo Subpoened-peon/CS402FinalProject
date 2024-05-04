@@ -2,14 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
+const defaultImage = require('../../assets/default.jpg');
+
 const Scroll = () => {
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [profilePics, setProfilePics] = useState([]);
 
   useEffect(() => {
     // Fetch posts from the remote URL
     fetchPosts();
+    fetchProfilePics();
   }, []);
+
+  const fetchProfilePics = async () => {
+    try {
+      const response = await fetch("https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=FishMongerPics");
+      const data = await response.json();
+      setProfilePics(data);
+    } catch (error) {
+      console.error('Error fetching profilePictures:', error);
+    }
+  };
 
   const fetchPosts = async () => {
     try {
@@ -21,6 +35,16 @@ const Scroll = () => {
     }
   };
 
+  const renderProfilePic = (post) => {
+
+      const userProfile = profilePics.find(profile => profile.userName === post.userName);
+      if (userProfile) {
+        const base64ImageUri = `data:image/jpg;base64,${userProfile.profilePic}`;
+    return <Image source={{ uri: base64ImageUri }} style={styles.profilePic} />;
+      }
+    return <Image source={defaultImage} style={styles.profilePic} />;
+  };
+  
   const handlePostPress = (post) => {
     setSelectedPost(post);
   };
@@ -34,6 +58,10 @@ const Scroll = () => {
       {posts.map((post, index) => (
         <TouchableOpacity key={index} onPress={() => handlePostPress(post)}>
           <View style={styles.postContainer}>
+          <View style={styles.profileContainer}>
+  {renderProfilePic(post)}
+  <Text style={styles.userNameStyle}>{post.userName}</Text>
+</View>
             <Image source={{ uri: `data:image/jpg;base64,${post.image}`}} style={styles.image} />
             <Text style={styles.caption}>{post.caption}</Text>
           </View>
@@ -98,6 +126,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
   },
+  userNameStyle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    fontFamily: 'Cochin',
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -123,6 +157,12 @@ const styles = StyleSheet.create({
   closeButtonText: {
     fontSize: 16,
     color: '#007bff',
+  },
+  profilePic: {
+    width: 30, 
+    height: 30,
+    borderRadius: 15, 
+    marginRight: 10,
   },
 });
 
