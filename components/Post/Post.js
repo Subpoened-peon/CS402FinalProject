@@ -53,7 +53,7 @@ const PostScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     const loadAddress =
-      'https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=ReelRecordPosts';
+      'https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=ReelRecordPosts1';
     pullPosts(setPostList, loadAddress);
   }, []);
 
@@ -124,7 +124,8 @@ const PostScreen = ({ navigation, route }) => {
       if (this.SnapCamera) {
         const options = { quality: 0.5, base64: true };
         let photo = await this.SnapCamera.takePictureAsync(options);
-        setPhoto(photo.uri);
+        console.log(photo.base64);
+        setPhoto(photo.base64);
       }
     };
 
@@ -136,7 +137,7 @@ const PostScreen = ({ navigation, route }) => {
       <View style={styles.detailbackground}>
         <LocationView />
         <View style={{ flex: 2, flexDirection: 'row', width: '100%' }}>
-          <Image style={styles.logo} source={{ uri: aphoto }} />
+          <Image style={styles.logo} source={{ uri:`data:image/jpg;base64,${aphoto}`}} />
           <CaptionView />
         </View>
         <Button title="Post" onPress={() => postImage()} />
@@ -211,7 +212,7 @@ const PostScreen = ({ navigation, route }) => {
 
     async function postImage() {
       const saveAddress =
-        'https://cs.boisestate.edu/~scutchin/cs402/codesnips/savejson.php?user=ReelRecordPosts';
+        'https://cs.boisestate.edu/~scutchin/cs402/codesnips/savejson.php?user=ReelRecordPosts1';
       const newPost = {
         userName: loggedInUser,
         caption: capRef.current,
