@@ -226,6 +226,8 @@ const PostScreen = ({ navigation, route }) => {
 
       await addNewPost(saveAddress, updatedPostList);
       Alert.alert('Successfully posted.');
+      
+      navigation.navigate('Scroll');
     }
 
     async function addNewPost(saveUrl, postList) {
