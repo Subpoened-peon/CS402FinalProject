@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, TouchableWithoutFeedback } from 'react-native';
+import { ScrollView, Text, View, StyleSheet, Image, TouchableOpacity, Modal, TouchableWithoutFeedback, RefreshControl } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
 const defaultImage = require('../../assets/default.jpg');
@@ -8,6 +8,7 @@ const Scroll = () => {
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [profilePics, setProfilePics] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     // Fetch posts from the remote URL
@@ -53,8 +54,14 @@ const Scroll = () => {
     setSelectedPost(null);
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchPosts().then(() => setRefreshing(false));
+  };
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
       {posts.map((post, index) => (
         <TouchableOpacity key={index} onPress={() => handlePostPress(post)}>
           <View style={styles.postContainer}>
