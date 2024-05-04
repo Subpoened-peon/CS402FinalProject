@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, TextInput, Button, TouchableOpacity, Text, Alert} from 'react-native';
+import {View, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform} from 'react-native';
 import styles from './InitialLoginStyles';
 
 async function pullUsers(aUserSet, loadUrl) {
@@ -83,8 +83,9 @@ async function registrationHandler() {
 
   await addNewUser(saveAddress, updatedUserList);
   Alert.alert("Successfully registered your account. Welcome!");
-  setLoggedInUser(user.userName);
+  setLoggedInUser(newUser.userName);
   setIsLoggedIn(true);
+  console.log(userList.length);
 }
 
 
@@ -116,9 +117,14 @@ async function registrationHandler() {
   Alert.alert("Login successful!");
   setIsLoggedIn(true);
   setLoggedInUser(user.userName);
+  console.log(userList.length);
 }
 
   return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
     <View style = {styles.container}>
       <TextInput style = {styles.input}
         placeholder = "Username"
@@ -140,6 +146,7 @@ async function registrationHandler() {
         </TouchableOpacity>
       </View>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 
