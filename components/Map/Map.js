@@ -11,7 +11,7 @@ const Map = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch('https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=ReelRecordPosts');
+      const response = await fetch('https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=ReelRecordPosts1');
       const data = await response.json();
       setPosts(data);
     } catch (error) {
@@ -42,7 +42,7 @@ const Map = () => {
             <Callout>
               <View>
                 {/* Display post image here */}
-                <Image source={{ uri: post.image }} style={styles.image} />
+                <Image source={{ uri: `data:image/jpg;base64,${post.image}` }} style={styles.image} />
                 <Text>{post.caption}</Text>
               </View>
             </Callout>
@@ -67,4 +67,3 @@ const styles = StyleSheet.create({
 });
 
 export default Map;
-
