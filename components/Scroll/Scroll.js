@@ -13,7 +13,7 @@ const Scroll = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch('https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=ReelRecordPosts');
+      const response = await fetch('https://cs.boisestate.edu/~scutchin/cs402/codesnips/loadjson.php?user=ReelRecordPosts1');
       const data = await response.json();
       setPosts(data);
     } catch (error) {
@@ -34,7 +34,7 @@ const Scroll = () => {
       {posts.map((post, index) => (
         <TouchableOpacity key={index} onPress={() => handlePostPress(post)}>
           <View style={styles.postContainer}>
-            <Image source={{ uri: post.image }} style={styles.image} />
+            <Image source={{ uri: `data:image/jpg;base64,${post.image}`}} style={styles.image} />
             <Text style={styles.caption}>{post.caption}</Text>
           </View>
         </TouchableOpacity>
